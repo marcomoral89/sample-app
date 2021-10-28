@@ -22,32 +22,31 @@
         <div>
           <h3 class="float-md-start mb-0">Thinkific App</h3>
           <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link active" aria-current="page" href="/">Install</a>
-            <a class="nav-link" href="/">How to use</a>
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link" href="#">How to use</a>
+            <a class="nav-link" href="#">Contact</a>
           </nav>
         </div>
       </header>
-
       <div class="container-fluid content">
-        <h1>Authorization Code Flow</h1>
-        <p>
-          To initiate the app install flow, append your Thinkific Subdomain to
-          the install url:
-        </p>
-        <p>Example: https://localhost:3000/install?subdomain=thinkeroo</p>
-        <br />
-        <h2>OR</h2>
-        <br />
-        <p>Input your Thinkfic Subdomain and hit Install</p>
-        <form action="/" method="post">
+        <h1>Let's make an API call:</h1>
+        <form action="/authcodeflow" method="post" id="selectFlowForm">
+          <select id="apiMethod" name="method">
+            <option value="get">GET</option>
+            <option value="post">POST</option>
+            <option value="delete">DELETE</option>
+            <option value="put">PUT</option>
+          </select>
           <input
             type="text"
-            placeholder="thinkeroo.thinkific.com"
-            name="subdomain"
+            id="basic-url"
+            name="baseUrl"
+            value="https://api.thinkific.com/api/public/v1/users?page=1&limit=25"
           />
-          <button type="submit">Install</button>
+          <button type="submit">Go</button>
         </form>
       </div>
+
       <div class="container-fluid footer">
         <footer class="mt-auto text-white-50 footer">
           <p>
