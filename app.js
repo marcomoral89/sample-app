@@ -62,34 +62,41 @@ app.get('/authcodeflow', (req, res) => {
     })
     .then((response) => {
       process.env.ACCESS_TOKEN = response.data.access_token;
+      res.redirect('http://localhost:3000/app');
       // console.log(process.env.ACCESS_TOKEN);
       // console.log(response.data);
-      res.sendFile(__dirname + '/views/authcodeflow.html');
+      // res.sendFile(__dirname + '/views/authcodeflow.html');
     })
     .catch((error) => res.send(error));
 });
 
+// APP URL
+app.get('/app', (req, res) => {
+  res.sendFile(__dirname + '/views/app.html');
+});
+
 // API REQUEST ON POST
-app.post('/authcodeflow', (req, res) => {
+app.post('/app', (req, res) => {
   var method = req.body.method;
   var baseUrl = req.body.baseUrl;
+  var bodyParams = req.body.bodyParams;
 
   axios({
     method: method,
     url: baseUrl,
     headers: {
-      Authorization: 'Bearer ' + process.env.ACCESS_TOKEN,
+      // Authorization : 'Bearer ' + process.env.ACCESS_TOKEN,
+      Authorization: 'Bearer 86fb739b-29f9-43db-a1b6-c7c81f7f760b',
       'Content-Type': 'application/json',
     },
-    // data: {
-    //   firstName: 'Finn',
-    //   lastName: 'Williams',
-    // },
+    data: bodyParams,
   })
     .then((response) => {
       res.send(response.data);
     })
-    .catch((error) => res.send(error));
+    .catch((error) => {
+      var errorMessage = error.message;
+    });
 });
 
 // SERVER PORT

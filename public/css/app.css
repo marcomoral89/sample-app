@@ -23,7 +23,11 @@
   color: crimson;
 }
 
-#subdomainInput {
-  max-width: 22rem;
-  margin: 0 auto;
+.form-label {
+  display: block;
+  text-align: left;
+}
+
+#app-container {
+  max-width: 60rem;
 }
