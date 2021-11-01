@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- head.ejs -->
+    <%- include('../partials/head');%>
+    <link rel="stylesheet" href="/css/index.css" />
+    <title>Welcome - Authorizatoin Code Flow</title>
+  </head>
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="mb-auto">
+        <!-- header.ejs -->
+        <%- include('../partials/header');%>
+      </header>
+    </div>
+    <div class="container-fluid content">
+      <h1>Authorization Code Flow</h1>
+      <p>
+        To initiate the app install flow, append your Thinkific Subdomain to the
+        install url:
+      </p>
+      <p>Example: https://localhost:3000/install?subdomain=thinkeroo</p>
+      <br />
+      <h2>OR</h2>
+      <br />
+      <p>Input your Thinkfic Subdomain and hit Install</p>
+      <form action="/" method="post">
+        <div class="input-group mb-3" id="subdomainInput">
+          <span class="input-group-text" id="basic-addon2">https://</span>
+          <input
+            type="text"
+            placeholder="thinkeroo.thinkific.com"
+            name="subdomain"
+            class="form-control"
+          />
+          <button type="submit" class="btn btn-primary">Install</button>
+        </div>
+      </form>
+    </div>
+    <div class="container-fluid footer">
+      <footer class="mt-auto text-white-50 footer">
+        <!-- footer.ejs -->
+        <%- include('../partials/footer');%>
+      </footer>
+    </div>
+  </body>
+</html>

@@ -5,9 +5,11 @@ const basicAuth = require('express-basic-auth');
 const port = 3000;
 const bodyParser = require('body-parser');
 var thinkificSub = '';
+
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.set('view engine', 'ejs');
 
 // ENV VARIABLES
 require('dotenv').config();
@@ -17,7 +19,7 @@ process.env.NODE_ENV;
 
 // ROUTE - HOME PAGE
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/views/index.html');
+  res.render('pages/index');
 });
 
 app.post('/', (req, res) => {
@@ -72,7 +74,7 @@ app.get('/authcodeflow', (req, res) => {
 
 // APP URL
 app.get('/app', (req, res) => {
-  res.sendFile(__dirname + '/views/app.html');
+  res.render('pages/app');
 });
 
 // API REQUEST ON POST
@@ -85,8 +87,7 @@ app.post('/app', (req, res) => {
     method: method,
     url: baseUrl,
     headers: {
-      // Authorization : 'Bearer ' + process.env.ACCESS_TOKEN,
-      Authorization: 'Bearer 86fb739b-29f9-43db-a1b6-c7c81f7f760b',
+      Authorization: 'Bearer ' + process.env.ACCESS_TOKEN,
       'Content-Type': 'application/json',
     },
     data: bodyParams,
@@ -96,6 +97,9 @@ app.post('/app', (req, res) => {
     })
     .catch((error) => {
       var errorMessage = error.message;
+      res.render('pages/error', {
+        errorMessage: errorMessage,
+      });
     });
 });
 

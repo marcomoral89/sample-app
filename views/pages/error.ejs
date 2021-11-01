@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- head.ejs -->
+    <%- include('../partials/head');%>
+    <link rel="stylesheet" href="/css/app.css" />
+
+    <title>Error</title>
+  </head>
+  <body class="d-flex h-100 text-center text-white bg-dark">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="mb-auto">
+        <!-- header.ejs -->
+        <%- include('../partials/header');%>
+      </header>
+      <div class="container-fluid content">
+        <h1>Oh no!</h1>
+        <h2><%- errorMessage %></h2>
+      </div>
+
+      <div class="container-fluid footer">
+        <footer class="mt-auto text-white-50 footer">
+          <!-- footer.ejs -->
+          <%- include('../partials/footer');%>
+        </footer>
+      </div>
+    </div>
+  </body>
+</html>
