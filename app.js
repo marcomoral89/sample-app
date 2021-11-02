@@ -13,8 +13,11 @@ app.set('view engine', 'ejs');
 
 // ENV VARIABLES
 require('dotenv').config();
-process.env.USER_ID;
-process.env.USER_KEY;
+process.env.CLIENT_KEY;
+process.env.CLIENT_SECRET;
+process.env.ACCESS_TOKEN;
+process.env.TOKEN_EXPIRY;
+process.env.REFRESH_TOKEN;
 process.env.NODE_ENV;
 
 // ROUTE - HOME PAGE
@@ -37,7 +40,7 @@ app.get('/install', (req, res) => {
 
   // REDIRECT USER TO AUTH PAGE
   res.redirect(
-    `https://${subdomain}.thinkific.com/oauth2/authorize?client_id=${process.env.USER_ID}&redirect_uri=${redirect_uri}&response_mode=query&response_type=code&scope=write:site_scripts`
+    `https://${subdomain}.thinkific.com/oauth2/authorize?client_id=${process.env.CLIENT_KEY}&redirect_uri=${redirect_uri}&response_mode=query&response_type=code&scope=write:site_scripts`
   );
 });
 
@@ -51,7 +54,7 @@ app.get('/authcodeflow', (req, res) => {
 
   // BASE64 ENCODE CLIENT_ID AND CLIENT KEY
   const authKey = Buffer.from(
-    process.env.USER_ID + ':' + process.env.USER_KEY
+    process.env.CLIENT_KEY + ':' + process.env.CLIENT_SECRET
   ).toString('base64');
 
   // POST REQUEST TO RETRIEVE ACCESS TOKEN
@@ -64,9 +67,13 @@ app.get('/authcodeflow', (req, res) => {
     })
     .then((response) => {
       process.env.ACCESS_TOKEN = response.data.access_token;
+      process.env.TOKEN_EXPIRY = response.data.expires_in;
+      process.env.REFRESH_TOKEN = response.data.refresh_token;
+
       res.redirect('http://localhost:3000/app');
-      // console.log(process.env.ACCESS_TOKEN);
-      // console.log(response.data);
+
+      console.log(process.env);
+
       // res.sendFile(__dirname + '/views/authcodeflow.html');
     })
     .catch((error) => res.send(error));
@@ -82,7 +89,6 @@ app.post('/app', (req, res) => {
   var method = req.body.method;
   var baseUrl = req.body.baseUrl;
   var bodyParams = req.body.bodyParams;
-
   axios({
     method: method,
     url: baseUrl,
