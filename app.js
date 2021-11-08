@@ -10,7 +10,6 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 var thinkificSub = '';
-var appUrl = 'https://floating-cliffs-95874.herokuapp.com/';
 
 // ENV VARIABLES
 require('dotenv').config();
@@ -28,14 +27,16 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   var installSub = req.body.subdomain.split('.');
-  res.redirect(`${appUrl}/install?subdomain=${installSub[0]}`);
+  res.redirect(
+    `https://floating-cliffs-95874.herokuapp.com/install?subdomain=${installSub[0]}`
+  );
 });
 
 // INSTALL URL
 app.get('/install', (req, res) => {
   const subdomain = req.query.subdomain;
   thinkificSub = `https://${subdomain}.thinkific.com`;
-  const redirect_uri = `${appUrl}/authcodeflow`;
+  const redirect_uri = `https://floating-cliffs-95874.herokuapp.com/authcodeflow`;
 
   res.redirect(
     `https://${subdomain}.thinkific.com/oauth2/authorize?client_id=${process.env.CLIENT_KEY}&redirect_uri=${redirect_uri}&response_mode=query&response_type=code&scope=write:site_scripts`
