@@ -10,8 +10,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 var thinkificSub = '';
-var appUrl =
-  `http://localhost:${port}` || 'https://floating-cliffs-95874.herokuapp.com/';
+var appUrl = 'https://floating-cliffs-95874.herokuapp.com/';
 
 // ENV VARIABLES
 require('dotenv').config();
