@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   var installSub = req.body.subdomain.split('.');
-  res.redirect(`http://localhost:3000/install?subdomain=${installSub[0]}`);
+  res.redirect(`http://localhost:${port}/install?subdomain=${installSub[0]}`);
 });
 
 // INSTALL URL
@@ -66,7 +66,7 @@ app.get('/authcodeflow', (req, res) => {
     .then((response) => {
       process.env.ACCESS_TOKEN = response.data.access_token;
       process.env.REFRESH_TOKEN = response.data.refresh_token;
-      res.redirect('http://localhost:3000/app');
+      res.redirect(`http://localhost:${port}/app`);
     })
     .catch((error) => res.send(error));
 });
