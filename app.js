@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const axios = require('axios').default;
 const basicAuth = require('express-basic-auth');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
