@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const axios = require('axios').default;
 const basicAuth = require('express-basic-auth');
-const port = 3000;
+const port = process.env.PORT;
 const bodyParser = require('body-parser');
 
 var thinkificSub = '';
