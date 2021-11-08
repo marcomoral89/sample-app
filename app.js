@@ -2,15 +2,16 @@ const express = require('express');
 const app = express();
 const axios = require('axios').default;
 const basicAuth = require('express-basic-auth');
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
-
-var thinkificSub = '';
-
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
+
+var thinkificSub = '';
+var appUrl =
+  `http://localhost:${port}` || 'https://floating-cliffs-95874.herokuapp.com/';
 
 // ENV VARIABLES
 require('dotenv').config();
@@ -28,14 +29,14 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   var installSub = req.body.subdomain.split('.');
-  res.redirect(`http://localhost:${port}/install?subdomain=${installSub[0]}`);
+  res.redirect(`${appUrl}/install?subdomain=${installSub[0]}`);
 });
 
 // INSTALL URL
 app.get('/install', (req, res) => {
   const subdomain = req.query.subdomain;
   thinkificSub = `https://${subdomain}.thinkific.com`;
-  const redirect_uri = `http://localhost:${port}/authcodeflow`;
+  const redirect_uri = `${appUrl}/authcodeflow`;
 
   res.redirect(
     `https://${subdomain}.thinkific.com/oauth2/authorize?client_id=${process.env.CLIENT_KEY}&redirect_uri=${redirect_uri}&response_mode=query&response_type=code&scope=write:site_scripts`
