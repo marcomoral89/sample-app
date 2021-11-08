@@ -27,3 +27,7 @@
   max-width: 22rem;
   margin: 0 auto;
 }
+
+.popover-header {
+  background-color: yellow;
+}
