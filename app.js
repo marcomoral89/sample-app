@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const axios = require('axios').default;
 const basicAuth = require('express-basic-auth');
-const port = 3000;
+const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
 
 var thinkificSub = '';
@@ -152,6 +152,6 @@ app.post('/app', (req, res) => {
 });
 
 // SERVER PORT
-app.listen(process.env.PORT || port, () => {
+app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
