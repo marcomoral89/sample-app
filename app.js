@@ -67,7 +67,7 @@ app.get('/authcodeflow', (req, res) => {
     .then((response) => {
       process.env.ACCESS_TOKEN = response.data.access_token;
       process.env.REFRESH_TOKEN = response.data.refresh_token;
-      res.redirect(`http://localhost:${port}/app`);
+      res.redirect(`https://floating-cliffs-95874.herokuapp.com/app`);
     })
     .catch((error) => res.send(error));
 });
