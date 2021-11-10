@@ -4,10 +4,13 @@ const axios = require('axios').default;
 const basicAuth = require('express-basic-auth');
 const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
+
+app.use(cookieParser());
 
 var thinkificSub = '';
 
@@ -16,7 +19,6 @@ require('dotenv').config();
 process.env.CLIENT_KEY;
 process.env.CLIENT_SECRET;
 process.env.ACCESS_TOKEN;
-process.env.TOKEN_EXPIRY;
 process.env.REFRESH_TOKEN;
 process.env.NODE_ENV;
 
@@ -27,16 +29,14 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   var installSub = req.body.subdomain.split('.');
-  res.redirect(
-    `https://floating-cliffs-95874.herokuapp.com/install?subdomain=${installSub[0]}`
-  );
+  res.redirect(`http://localhost:${port}/install?subdomain=${installSub[0]}`);
 });
 
 // INSTALL URL
 app.get('/install', (req, res) => {
   const subdomain = req.query.subdomain;
   thinkificSub = `https://${subdomain}.thinkific.com`;
-  const redirect_uri = `https://floating-cliffs-95874.herokuapp.com/authcodeflow`;
+  const redirect_uri = `http://localhost:${port}/authcodeflow`;
 
   res.redirect(
     `https://${subdomain}.thinkific.com/oauth2/authorize?client_id=${process.env.CLIENT_KEY}&redirect_uri=${redirect_uri}&response_mode=query&response_type=code&scope=write:site_scripts`
@@ -65,17 +65,30 @@ app.get('/authcodeflow', (req, res) => {
       },
     })
     .then((response) => {
-      process.env.ACCESS_TOKEN = response.data.access_token;
-      process.env.REFRESH_TOKEN = response.data.refresh_token;
-      res.redirect(`https://floating-cliffs-95874.herokuapp.com/app`);
+      // process.env.ACCESS_TOKEN = response.data.access_token;
+      // process.env.REFRESH_TOKEN = response.data.refresh_token;
+      return (
+        res.cookie('token', response.data.access_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+        }),
+        res.cookie('refreshToken', response.data.refresh_token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+        }),
+        res.redirect(`http://localhost:${port}/app`)
+      );
     })
     .catch((error) => res.send(error));
 });
 
 // APP URL
 app.get('/app', (req, res) => {
+  console.log(req.cookies.token);
+  console.log(req.cookies.refreshToken);
+
   var tokenValidation;
-  if (process.env.ACCESS_TOKEN == '') {
+  if (req.cookies.token == '') {
     tokenValidation = false;
     res.render('pages/app', {
       tokenValidation: tokenValidation,
@@ -110,11 +123,17 @@ app.post('/app', (req, res) => {
         },
         data: {
           grant_type: 'refresh_token',
-          refresh_token: process.env.REFRESH_TOKEN,
+          refresh_token: req.cookies.refreshToken,
         },
       });
-      console.log(resp.data);
-      process.env.ACCESS_TOKEN = resp.data.access_token;
+      res.cookie('token', response.data.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
+      res.cookie('refreshToken', response.data.refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
     } catch (error) {
       console.log(error);
     }
@@ -127,7 +146,7 @@ app.post('/app', (req, res) => {
         method: method,
         url: baseUrl,
         headers: {
-          Authorization: 'Bearer ' + process.env.ACCESS_TOKEN,
+          Authorization: 'Bearer ' + req.cookies.token,
           'Content-Type': 'application/json',
         },
         data: bodyParams,
