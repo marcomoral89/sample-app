@@ -29,16 +29,14 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   var installSub = req.body.subdomain.split('.');
-  res.redirect(
-    `https://floating-cliffs-95874.herokuapp.com/install?subdomain=${installSub[0]}`
-  );
+  res.redirect(`http://localhost:${port}/install?subdomain=${installSub[0]}`);
 });
 
 // INSTALL URL
 app.get('/install', (req, res) => {
   const subdomain = req.query.subdomain;
   thinkificSub = `https://${subdomain}.thinkific.com`;
-  const redirect_uri = `https://floating-cliffs-95874.herokuapp.com/authcodeflow`;
+  const redirect_uri = `http://localhost:${port}/authcodeflow`;
 
   res.redirect(
     `https://${subdomain}.thinkific.com/oauth2/authorize?client_id=${process.env.CLIENT_KEY}&redirect_uri=${redirect_uri}&response_mode=query&response_type=code&scope=write:site_scripts`
@@ -78,7 +76,7 @@ app.get('/authcodeflow', (req, res) => {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
         }),
-        res.redirect(`https://floating-cliffs-95874.herokuapp.com/app`)
+        res.redirect(`http://localhost:${port}/app`)
       );
     })
     .catch((error) => res.send(error));
@@ -175,5 +173,5 @@ app.post('/app', (req, res) => {
 
 // SERVER PORT
 app.listen(port, () => {
-  console.log(`App listening at https://floating-cliffs-95874.herokuapp.com`);
+  console.log(`App listening at http://localhost:${port}`);
 });
