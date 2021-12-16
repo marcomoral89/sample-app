@@ -4,7 +4,6 @@
     <!-- head.ejs -->
     <%- include('../partials/head');%>
     <link rel="stylesheet" href="/css/app.css" />
-
     <title>Error - <%= errorMessage %></title>
   </head>
   <body class="d-flex h-100 text-center text-white bg-dark">
@@ -15,13 +14,21 @@
       </header>
       <div class="container-fluid content">
         <h1>Oops!</h1>
-        <h3><%= errorMessage %></h3>
-        <br />
-        <form action="/app">
-          <input class="btn btn-primary" type="submit" value="Try Again" />
-        </form>
+        <% if (errorMessage.includes('401')) { %>
+            <h3>Access Token Expired </h3>
+            <br>
+            <form action="/token">
+              <input class="btn btn-primary" type="submit" value="Get Access Token" />
+            </form>
+            <% console.log('true');%> 
+            <% } else { %>
+              <h3><%= errorMessage %></h3>
+              <br />
+              <form action="/app">
+                <input class="btn btn-primary" type="submit" value="Try Again" />
+              </form>
+            <% } %> 
       </div>
-
       <div class="container-fluid footer">
         <footer class="mt-auto text-white-50 footer">
           <!-- footer.ejs -->

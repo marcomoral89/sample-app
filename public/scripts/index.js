@@ -28,3 +28,16 @@ var tooltipTriggerList = [].slice.call(
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl);
 });
+
+// DISABLE SUBMIT BUTTON
+$(document).ready(function () {
+  var tokenError = $('#tokenError')[0].innerHTML;
+  console.log(tokenError);
+
+  if (tokenError == 'App Installed:') {
+    $('#installButton')
+      .prop('disabled', 'true')
+      .css('background-color', 'grey')
+      .css('border-color', 'grey');
+  }
+});
