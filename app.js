@@ -5,21 +5,43 @@ const basicAuth = require('express-basic-auth');
 const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
-
 app.use(cookieParser());
 
+// GLOBAL VARIABLES
 var thinkificSub = '';
 var tokenValidation;
+
+// CRYPTO MODULE
+const crypto = require('crypto');
+const algorithm = 'aes-256-cbc';
+const initVector = crypto.randomBytes(16);
+const Securitykey = crypto.randomBytes(32);
+
+// ENCRYPT TOKEN
+function encryptToken(token) {
+  const cipher = crypto.createCipheriv(algorithm, Securitykey, initVector);
+  let encryptedData = cipher.update(token, 'utf-8', 'hex');
+  encryptedData += cipher.final('hex');
+  return encryptedData;
+}
+
+// DECRYPT TOKEN
+function decryptToken(encryptedToken) {
+  const decipher = crypto.createDecipheriv(algorithm, Securitykey, initVector);
+  let decryptedData = decipher.update(encryptedToken, 'hex', 'utf-8');
+  decryptedData += decipher.final('utf8');
+  return decryptedData;
+}
 
 // ENV VARIABLES
 require('dotenv').config();
 process.env.CLIENT_KEY;
 process.env.CLIENT_SECRET;
-process.env.ACCESS_TOKEN;
 process.env.NODE_ENV;
 
 //INDEX
@@ -66,7 +88,7 @@ app.get('/authcodeflow', (req, res) => {
     process.env.CLIENT_KEY + ':' + process.env.CLIENT_SECRET
   ).toString('base64');
 
-  // POST REQUEST TO RETRIEVE ACCESS TOKEN
+  // RETRIEVE ACCESS TOKEN
   axios
     .post(thinkificSub + '/oauth2/token', json, {
       headers: {
@@ -75,17 +97,11 @@ app.get('/authcodeflow', (req, res) => {
       },
     })
     .then((response) => {
-      // process.env.ACCESS_TOKEN = response.data.access_token;
-      process.env.REFRESH_TOKEN = response.data.refresh_token;
       return (
-        res.cookie('token', response.data.access_token, {
+        res.cookie('token', encryptToken(response.data.access_token), {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
         }),
-        // res.cookie('refreshToken', response.data.refresh_token, {
-        //   httpOnly: true,
-        //   secure: process.env.NODE_ENV === 'production',
-        // }),
         res.redirect(`http://localhost:${port}/app`)
       );
     })
@@ -94,10 +110,6 @@ app.get('/authcodeflow', (req, res) => {
 
 // APP URL
 app.get('/app', (req, res) => {
-  console.log('access token ' + req.cookies.token);
-  console.log('refresh token ' + process.env.REFRESH_TOKEN);
-  // console.log('refresh token ' + req.cookies.refreshToken);
-
   if (req.cookies.token == null) {
     tokenValidation = false;
     res.render('pages/app', {
@@ -122,34 +134,6 @@ app.post('/app', (req, res) => {
     process.env.CLIENT_KEY + ':' + process.env.CLIENT_SECRET
   ).toString('base64');
 
-  // REFRESH ACCESS TOKEN
-  const refreshToken = async () => {
-    try {
-      const resp = await axios({
-        method: 'post',
-        url: thinkificSub + '/oauth2/token',
-        headers: {
-          Authorization: 'Basic ' + authKey,
-          'Content-Type': 'application/json',
-        },
-        data: {
-          grant_type: 'refresh_token',
-          refresh_token: req.cookies.refreshToken,
-        },
-      });
-      res.cookie('token', response.data.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
-      res.cookie('refreshToken', response.data.refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   // MAKE THE API CALL
   const sendRequest = async () => {
     try {
@@ -157,20 +141,18 @@ app.post('/app', (req, res) => {
         method: method,
         url: baseUrl,
         headers: {
-          Authorization: 'Bearer ' + req.cookies.token,
+          Authorization: 'Bearer ' + decryptToken(req.cookies.token),
           'Content-Type': 'application/json',
         },
         data: bodyParams,
       });
       var respData = resp.data.items;
-      // console.log(bodyParams);
       res.render('pages/response', {
         respData: respData,
       });
     } catch (error) {
       var errorMessage = error.message;
       if (errorMessage.includes('401')) {
-        // console.log(error);
         res.render('pages/error', {
           errorMessage: errorMessage,
         });
