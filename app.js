@@ -61,13 +61,15 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   var installSub = req.body.subdomain.split('.');
-  res.redirect(`install?subdomain=${installSub[0]}`);
+  res.redirect(
+    `https://floating-cliffs-95874.herokuapp.com/install?subdomain=${installSub[0]}`
+  );
 });
 
 // INSTALL URL
 app.get('/install', (req, res) => {
   const subdomain = req.query.subdomain;
-  const redirect_uri = `/authcodeflow`;
+  const redirect_uri = `https://floating-cliffs-95874.herokuapp.com/authcodeflow`;
   thinkificSub = `https://${subdomain}.thinkific.com`;
 
   res.redirect(
@@ -102,7 +104,7 @@ app.get('/authcodeflow', (req, res) => {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
         }),
-        res.redirect(`/app`)
+        res.redirect(`https://floating-cliffs-95874.herokuapp.com/app`)
       );
     })
     .catch((error) => res.send(error));
