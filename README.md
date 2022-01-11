@@ -14,11 +14,12 @@ Thinkific OAuth Flow:
 Instructions:
 - Download/Clone Repo- 
 - Install Dependencies - npm install
-- Start server - node app.js
+- Add CLIENT_KEY and CLIENT_SECRET in the .env file
+- Start server: node app.js
 
 
 How to use the app:
 - Go to the index page
 - Install the app to your Thinkific site
-- An access token is generated and stored
+- An access token is generated, encrypted and stored in the cookie
 - User is redirect /app where then can test the Thinkific API endpoints
