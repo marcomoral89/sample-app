@@ -3,6 +3,8 @@
 Tech Stack:
 - Node
 - Express.js
+- Crypto.js
+- Axios
 - EJS
 - Bootsrap 5
 
