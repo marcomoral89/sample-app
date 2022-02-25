@@ -12,10 +12,6 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 
-// GLOBAL VARIABLES
-var thinkificSub = '';
-var tokenValidation;
-
 // CRYPTO MODULE
 const crypto = require('crypto');
 const algorithm = 'aes-256-cbc';
@@ -97,6 +93,7 @@ app.get('/authcodeflow', (req, res) => {
       },
     })
     .then((response) => {
+      // console.log(response);
       return (
         res.cookie('token', encryptToken(response.data.access_token), {
           httpOnly: true,
